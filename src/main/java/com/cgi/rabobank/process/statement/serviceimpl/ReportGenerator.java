@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.Iterator;
+import java.util.List;
 import java.util.stream.Stream;
 
 import org.springframework.stereotype.Service;
@@ -32,14 +32,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReportGenerator {
 
-	public void generateReport(Iterator<Record> recordList, String fileName) {
+	public void generateReport(List<Record> recordList, String fileName) {
 		com.itextpdf.text.Document document = createDocument(fileName);
 		try {
 			document.open();
 			PdfPTable table = new PdfPTable(2);
 			document.addTitle("Report on Customer Record Processing");
 			addTableHeader(table);
-			recordList.forEachRemaining(record -> addRows(table, record));
+			recordList.stream().forEach(record -> addRows(table, record));
 			log.debug("Finished inserting data into report.");
 			document.add(table);
 		} catch (DocumentException e) {
