@@ -1,7 +1,6 @@
 package com.cgi.rabobank.process.statement.serviceimpl;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
@@ -31,11 +30,8 @@ public class CSVProcessor implements StatementProcessor {
 		try (FileReader fileReader = new FileReader(statementFile)) {
 
 			CsvToBean<Record> csvToBean = new CsvToBeanBuilder<Record>(fileReader).withType(Record.class).build();
-			
+
 			return csvToBean.parse();
-		} catch (FileNotFoundException e) {
-			log.error("Unable to locate the CSV File ", e);
-			throw new RecordProcessingException(e.getMessage());
 		} catch (IOException e) {
 			log.error("Error while processing CSV file", e);
 			throw new RecordProcessingException(e.getMessage());
