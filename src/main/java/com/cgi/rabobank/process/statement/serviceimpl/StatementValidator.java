@@ -13,8 +13,8 @@ import com.cgi.rabobank.process.statement.model.Records.Record;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * This is a statement validation.
- * Contains methods that validates the statements as per the business rules.
+ * This is a statement validation. Contains methods that validates the
+ * statements as per the business rules.
  * 
  * @author arjav.shah
  *
@@ -26,23 +26,28 @@ public class StatementValidator {
 	public List<Record> validateRecords(List<Record> records) {
 		List<Record> recordList = new ArrayList<>();
 		Set<Integer> referenceSet = new HashSet<>();
-		float epsilon = 0.00001f;
-		records.forEach(record->{
-			float calculatedBalance = record.getStartBalance() + record.getMutation();
-			if ((Math.abs(calculatedBalance - record.getEndBalance()) > epsilon)) {
-				recordList.add(record);
-			}
-			Integer refNum = record.getReference();
-			if (refNum!=null && !referenceSet.contains(refNum)) {
-				referenceSet.add(refNum);
-			} else {
-				recordList.add(record);
-			}
+
+		records.forEach(record -> {
+			checkRecord(record, referenceSet, recordList);
 		});
 		int count = records.size();
-		log.debug("Finished processing {} records.",count);
-		log.debug("Found {} failed records.",recordList.size());
+		log.debug("Finished processing {} records.", count);
+		log.debug("Found {} failed records.", recordList.size());
 		return recordList;
+	}
+
+	private void checkRecord(Record record, Set<Integer> referenceSet, List<Record> recordList) {
+		float epsilon = 0.00001f;
+		float calculatedBalance = record.getStartBalance() + record.getMutation();
+		if ((Math.abs(calculatedBalance - record.getEndBalance()) > epsilon)) {
+			recordList.add(record);
+		}
+		Integer refNum = record.getReference();
+		if (refNum != null && !referenceSet.contains(refNum)) {
+			referenceSet.add(refNum);
+		} else {
+			recordList.add(record);
+		}
 	}
 
 }
